@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package etu2020.framework.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -31,10 +31,7 @@ public class FrontServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         response.setContentType("text/plain");
         PrintWriter out = response.getWriter();
-        String url = request.getRequestURI();
-        out.println(url);
-        String getvalue = request.getQueryString();
-        out.println(getvalue);
+        out.println("Coucou");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
