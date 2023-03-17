@@ -4,8 +4,8 @@
  */
 package model;
 
-import etu2020.Framework.annotation.MethodAnnotation;
-import etu2020.Framework.annotation.ModelAnnotation;
+import etu2020.framework.annotation.MethodAnnotation;
+import etu2020.framework.annotation.ModelAnnotation;
 
 /**
  *
