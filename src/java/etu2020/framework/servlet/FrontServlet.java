@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -28,6 +29,23 @@ public class FrontServlet extends HttpServlet {
     
     HashMap<String, Mapping> urlMapping = new HashMap<>();
 
+    @Override
+    public void init() throws ServletException {
+        String packageName = "model";
+        
+        try{
+            MyUtils.getClasses(packageName, this.getUrlMapping());
+            
+//            Mapping map =  getUrlMapping().get(url);
+//            out.println(map.getMethod());
+        }catch(IOException | ClassNotFoundException | URISyntaxException e){
+            Logger.getLogger(FrontServlet.class.getName()).log(Level.SEVERE, null, e);
+        }
+        
+    }
+    
+    
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -37,24 +55,18 @@ public class FrontServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      * @throws java.lang.ClassNotFoundException
+     * @throws java.net.URISyntaxException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, ClassNotFoundException, URISyntaxException {
         response.setContentType("text/html;charset=UTF-8");
         response.setContentType("text/plain");
+        
         PrintWriter out = response.getWriter();
         
-        out.println("Coucou");
-        String packageName = "etu2020";
+        Mapping map = getUrlMapping().get("sayhello");
+        out.println(map.getClassName());
         
-        try{
-            ArrayList<Class<?>> allclasses = MyUtils.getClasses(packageName, out);
-            for(Class<?> classes : allclasses){
-                out.println(classes);
-            }
-        }catch(ClassNotFoundException e){
-            out.print(e);
-        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
