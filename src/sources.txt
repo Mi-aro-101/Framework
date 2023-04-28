@@ -1,3 +1,2 @@
-./test2/Test2.java
-./genericdao/Genericdao.java
-./Test1.java
+./models/test/Test.java
+./Olona.java
