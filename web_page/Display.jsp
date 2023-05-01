@@ -12,6 +12,11 @@
         <title>Just a test</title>
     </head>
     <body>
-        <h1>Hello Friends, please welcome here !</h1>
+        <h1>La liste de vos objets : 
+        </h1>
+        <ul>
+            <li><%=request.getAttribute("Nom")%></li>
+            <li><%=request.getAttribute("Compagnon")%></li>
+        </ul>
     </body>
 </html>
