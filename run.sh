@@ -10,10 +10,10 @@ cd ./Framework
 # Compile my framework and extract it to the 'lib' directory
 javac -d . *.java
 mkdir -p ../WEB-INF/lib
-jar -cf ../WEB-INF/lib/liantsiky.jar etu2020 && cp -r etu2020 ../src
+jar -cf ../WEB-INF/lib/miaro.jar etu2020 && cp -r etu2020 ../src
 
 # Compile src java's of the user and move '.class' them to the 'classes' directory
-cd ../src
+cd ../src                                                   
 find -name "*.java" > sources.txt
 javac -d . @sources.txt
 mkdir -p ../WEB-INF/classes

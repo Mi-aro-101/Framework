@@ -69,11 +69,12 @@ public class FrontServlet extends HttpServlet {
         
         String methodUri = request.getRequestURI();
         String[] urlMethods = methodUri.split("/");
-        String urlMethod = urlMethods[urlMethods.length - 1];
+        String urlMethod = urlMethods[urlMethods.length-1];
 
         // out.println(getUrlMapping().get("findall").getClassName());
 
         Mapping map = getUrlMapping().get(urlMethod);
+        out.println(map.getClassName());
         
         // Checking if the url match a method and if so dispatch it otherwise do nothing
         try{

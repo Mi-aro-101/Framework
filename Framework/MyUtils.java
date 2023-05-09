@@ -9,7 +9,7 @@ import etu2020.framework.annotation.MethodAnnotation;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Method;
+// import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
@@ -52,6 +52,9 @@ public class MyUtils {
 
     public static void setParsed(HttpServletRequest request, Object yourclass, PrintWriter out) throws Exception{
         Field[] fields = yourclass.getClass().getDeclaredFields();
+        if(fields.length == 0){
+            return;
+        }
         int i = 0;
         for(Field field : fields){
             Class<?> fieldType = field.getType();
@@ -63,8 +66,6 @@ public class MyUtils {
             String method = findMethod("set"+field.getName(), yourclass);
             yourclass.getClass().getMethod(method, fieldType).invoke(yourclass, parsedValue);
         }
-        out.println(yourclass.getClass().getMethod("getNom").invoke(yourclass));
-        out.println(yourclass.getClass().getMethod("getNbrCompagnon").invoke(yourclass));
 
     }
     
@@ -87,7 +88,6 @@ public class MyUtils {
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
             File file = new File(resource.toURI());
-//            if (file.isDirectory()) {
                 for (File child : file.listFiles()) {
                     if(child.isFile()){
                         String className = packageName + "." + child.getName().split("\\.")[0];
@@ -95,8 +95,7 @@ public class MyUtils {
                         getMethods(Class.forName(className), urlMapping);
                     }
                     classes.addAll(getClasses(packageName + "." + child.getName().split("\\.")[0], urlMapping));
-//                }
-            } 
+                }
         }
         return classes;
     }
@@ -123,7 +122,7 @@ public class MyUtils {
     * @return Modelview(String jspPage, HashMap<> datas) 
     * @param request is needed to setAttribute the data in the Modelview that will be return
     * @param map Mapping that corresponds a method contained in your class
-    * @param urlMapping HasMap that contain all classes and method in your class
+    * @param urlMapping HashMap that contain all classes and method in your class
     * @param urlMethod is the url from requestURI that shall correspond to a method in urlMapping
     * @throws Exception any
      */
