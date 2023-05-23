@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>Pour la classe olona</h1>
-    <form action="fillup", method="post">
+    <form action="arg", method="post">
         <p><input type="text" name="nom" placeholder="nom"></p>
         <p><input type="number" name="nbrCompagnon" placeholder="nombre de compagnon"></p>
         <p><input type="submit" value="Soumettre"></p>

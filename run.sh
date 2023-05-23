@@ -1,5 +1,5 @@
 # Initializing variable
-tomcat=~/apache-tomcat-10.0.27/
+tomcat=~/apache-tomcat-10.1.9/
 var=$(pwd)
 basename $(pwd)
 mydir="$(basename $PWD)"
@@ -13,7 +13,7 @@ mkdir -p ../WEB-INF/lib
 jar -cf ../WEB-INF/lib/miaro.jar etu2020 && cp -r etu2020 ../src
 
 # Compile src java's of the user and move '.class' them to the 'classes' directory
-cd ../src                                                   
+cd ../src
 find -name "*.java" > sources.txt
 javac -d . @sources.txt
 mkdir -p ../WEB-INF/classes

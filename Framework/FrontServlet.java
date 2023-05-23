@@ -80,7 +80,7 @@ public class FrontServlet extends HttpServlet {
         try{
             Object o = Class.forName(map.getClassName()).getConstructor().newInstance();
             MyUtils.setParsed(request, o, out);
-            Modelview mv =  MyUtils.urlModelView(request, map, getUrlMapping(), urlMethod, o);
+            Modelview mv =  MyUtils.urlModelView(request, map, getUrlMapping(), urlMethod, o, out);
             if(mv != null){
                 request.getRequestDispatcher(mv.getView()).forward(request, response);     
             }

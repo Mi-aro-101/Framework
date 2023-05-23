@@ -17,4 +17,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface MethodAnnotation {
     public String url() default "";
+    public boolean args() default false;
 }

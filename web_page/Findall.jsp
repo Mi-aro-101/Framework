@@ -7,7 +7,8 @@
 </head>
 <body>
     <h1>
-        <%=request.getAttribute("Naruto")%>
+        <%=request.getAttribute("One")%>
+        <%=request.getAttribute("Two")%>
     </h1>
 </body>
 </html>
