@@ -9,7 +9,7 @@ import etu2020.framework.annotation.MethodAnnotation;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Method;
+// import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
@@ -38,6 +38,10 @@ public class MyUtils {
         PARSERS.put(String.class, Function.identity());
     }
 
+    /**
+     * Find the proper method to call in case the other one have sensitive case
+     * @return the right method with the rigth case
+     */
     public static String findMethod(String methodName, Object yourclass)throws Exception{
         String rightMethod = "";
         for(Method method : yourclass.getClass().getDeclaredMethods()){
@@ -50,9 +54,17 @@ public class MyUtils {
         return rightMethod;
     }
 
+    /**
+     * Take value from a formulaire and parse those values to the proper type of the designed class
+     * @param request is the HttpServletRequest where we want to get the attribute from the formulaire
+     * @param yourclass is the class we want to set attribute to the value from the formulaire
+     */
     public static void setParsed(HttpServletRequest request, Object yourclass, PrintWriter out) throws Exception{
         Field[] fields = yourclass.getClass().getDeclaredFields();
-        int i = 0;
+        if(fields.length == 0){
+            return;
+        }   
+        
         for(Field field : fields){
             Class<?> fieldType = field.getType();
             Function<String, ?> parser = PARSERS.get(fieldType);
@@ -63,15 +75,13 @@ public class MyUtils {
             String method = findMethod("set"+field.getName(), yourclass);
             yourclass.getClass().getMethod(method, fieldType).invoke(yourclass, parsedValue);
         }
-        out.println(yourclass.getClass().getMethod("getNom").invoke(yourclass));
-        out.println(yourclass.getClass().getMethod("getNbrCompagnon").invoke(yourclass));
 
     }
     
     /**
      * function that will scan all classes in a package
      * also calls get method to retrieve all the methods in that class that will present a method annotation
-     *@param packageName is the package to scan
+     * @param packageName is the package to scan
      * @param urlMapping is the HashMap to fill with the url and Mapping (sprint2)
      * @return an Arraylist of all the classes found
      * @throws java.lang.ClassNotFoundException in case there is non e such class
@@ -87,7 +97,6 @@ public class MyUtils {
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
             File file = new File(resource.toURI());
-//            if (file.isDirectory()) {
                 for (File child : file.listFiles()) {
                     if(child.isFile()){
                         String className = packageName + "." + child.getName().split("\\.")[0];
@@ -95,8 +104,7 @@ public class MyUtils {
                         getMethods(Class.forName(className), urlMapping);
                     }
                     classes.addAll(getClasses(packageName + "." + child.getName().split("\\.")[0], urlMapping));
-//                }
-            } 
+                }
         }
         return classes;
     }
@@ -123,21 +131,81 @@ public class MyUtils {
     * @return Modelview(String jspPage, HashMap<> datas) 
     * @param request is needed to setAttribute the data in the Modelview that will be return
     * @param map Mapping that corresponds a method contained in your class
-    * @param urlMapping HasMap that contain all classes and method in your class
+    * @param urlMapping HashMap that contain all classes and method in your class
     * @param urlMethod is the url from requestURI that shall correspond to a method in urlMapping
     * @throws Exception any
-     */
-    public static Modelview urlModelView(HttpServletRequest request, Mapping map, HashMap<String, Mapping> urlMapping, String urlMethod, Object yourclass)
+    */
+    public static Modelview urlModelView(HttpServletRequest request, Mapping map, HashMap<String, Mapping> urlMapping, String urlMethod, Object yourclass, PrintWriter out)
     throws Exception {
         Modelview viewPage = null;
+        // The function argument, if none then set to null
         if(urlMapping.containsKey(urlMethod)){
-            viewPage = (Modelview)yourclass.getClass().getMethod(map.getMethod(), (Class<?>[])null).invoke(yourclass);
+            if(methodNoArgs(map, yourclass).getAnnotation(MethodAnnotation.class).args()){
+                viewPage = setParseArgs(request, yourclass, map, out);
+            }
+            else{
+                viewPage = (Modelview)yourclass.getClass().getMethod(map.getMethod(), (Class<?>[])null).invoke(yourclass);
+            }
+
             HashMap<String, Object> datas = viewPage.getData();
+
             for(String key : datas.keySet()){
                 request.setAttribute(key, datas.get(key));
             }
         }
         return viewPage;
     }
-    
+
+    /**
+     * This function gets the proper method as Method type 
+     * @param map mapping that contains the class name and method name that has been called
+     * @param yourclass is instance of the class in map
+     */
+    public static Method methodNoArgs(Mapping map, Object yourclass){
+        Method argsMethod = null;
+        for(Method method : yourclass.getClass().getDeclaredMethods()){
+            if(method.getName().equals(map.getMethod())){
+                argsMethod = method;
+                break;
+            }
+        }
+
+        return argsMethod;
+    }
+
+    /**
+     * This function call the rigth method by giving him the right(s) argument
+     * Also It parse the input from html to the proper type required by the method thqt will be called
+     * @param request HttpServletRequest that contains the attribute sended from form
+     * @param yourclass instance of the proper class that contains the method
+     * @param map is Mapping that contains the class and the method 
+     * @return Modelview returned by the method invoked with it's argument given
+     * @throws Exception of all type
+     */
+    public static Modelview setParseArgs(HttpServletRequest request, Object yourclass, Mapping map, PrintWriter out)throws Exception{
+        Enumeration enumeration = request.getParameterNames();
+        HashMap<String, Class<?>> argInfo = new HashMap<>();
+        // Find the method to call their parameters
+        
+        Method argsMethod = methodNoArgs(map, yourclass);
+
+        for(Class<?> paramtypes : argsMethod.getParameterTypes()){
+            String paramname = (String)enumeration.nextElement();
+            argInfo.put(request.getParameter(paramname), paramtypes);
+        }
+
+        Object[] args = new Object[argInfo.size()];
+        Class<?>[] argsTypes = new Class<?>[argInfo.size()];
+        int i = 0;
+
+
+        for(String key : argInfo.keySet()){
+            argsTypes[i] = argInfo.get(key);
+            Function<String ,?> parser = PARSERS.get(argsTypes[i]);
+            args[i] = parser.apply(key);
+            i++;
+        }
+
+        return (Modelview)yourclass.getClass().getMethod(map.getMethod(), argsTypes).invoke(yourclass, args);
+    }  
 }

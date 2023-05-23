@@ -69,17 +69,18 @@ public class FrontServlet extends HttpServlet {
         
         String methodUri = request.getRequestURI();
         String[] urlMethods = methodUri.split("/");
-        String urlMethod = urlMethods[urlMethods.length - 1];
+        String urlMethod = urlMethods[urlMethods.length-1];
 
         // out.println(getUrlMapping().get("findall").getClassName());
 
         Mapping map = getUrlMapping().get(urlMethod);
+        out.println(map.getClassName());
         
         // Checking if the url match a method and if so dispatch it otherwise do nothing
         try{
             Object o = Class.forName(map.getClassName()).getConstructor().newInstance();
             MyUtils.setParsed(request, o, out);
-            Modelview mv =  MyUtils.urlModelView(request, map, getUrlMapping(), urlMethod, o);
+            Modelview mv =  MyUtils.urlModelView(request, map, getUrlMapping(), urlMethod, o, out);
             if(mv != null){
                 request.getRequestDispatcher(mv.getView()).forward(request, response);     
             }

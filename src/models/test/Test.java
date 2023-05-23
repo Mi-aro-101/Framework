@@ -16,12 +16,21 @@ import java.util.*;
 @ModelAnnotation
 public class Test {
     @MethodAnnotation(url="findall")
-    public static Modelview findall(){
+    public Modelview findall(){
         HashMap<String, Object> datas = new HashMap<>();
-        datas.put("Naruto", "Datebayo");
-        datas.put("Sasuke", 666);
-        datas.put("Liantsiky", "<3");
+        datas.put("One", "Datebayo");
+        datas.put("Two", 666);
+        datas.put("Three", "<3");
 
-        return new Modelview("Display.jsp", datas);
+        return new Modelview("Findall.jsp", datas);
+    }
+
+    @MethodAnnotation(url="arg", args=true)
+    public Modelview insert(String a, int b){
+        HashMap<String, Object> datas = new HashMap<>();
+        datas.put("One", a);
+        datas.put("Two", b);
+
+        return new Modelview("Findall.jsp", datas);
     }
 }
