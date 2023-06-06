@@ -6,10 +6,10 @@ package etu2020.framework.myutils;
 
 import etu2020.framework.Mapping;
 import etu2020.framework.annotation.MethodAnnotation;
+import etu2020.framework.upload.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-// import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
@@ -24,10 +24,19 @@ import jakarta.servlet.http.HttpServletResponse;
 import etu2020.framework.Mapping;
 import etu2020.framework.Modelview;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
+
 /**
  *
  * @author miaro
  */
+@MultipartConfig
 public class MyUtils {
 
     // map that willcontains all parser method
@@ -36,6 +45,7 @@ public class MyUtils {
         PARSERS.put(int.class, Integer::parseInt);
         PARSERS.put(double.class, Double::parseDouble);
         PARSERS.put(String.class, Function.identity());
+        PARSERS.put(long.class, Long::parseLong);
     }
 
     /**
@@ -65,17 +75,42 @@ public class MyUtils {
             return;
         }   
         
+        Object parsedValue = null;
+        
+        
         for(Field field : fields){
+            
             Class<?> fieldType = field.getType();
             Function<String, ?> parser = PARSERS.get(fieldType);
-            if(parser == null){
-                throw new Exception("Unsupported field type: "+fieldType);
+            
+            if(checkType(request, field.getName(), out)){
+                FileDetails fileDetails = FileDetails.retrieveFileDetails(request.getPart(field.getName()));
+                parsedValue = (FileDetails)fileDetails;
             }
-            Object parsedValue = parser.apply(request.getParameter(field.getName()));
+
+            else{
+                parsedValue = parser.apply(request.getParameter(field.getName()));
+            }
             String method = findMethod("set"+field.getName(), yourclass);
             yourclass.getClass().getMethod(method, fieldType).invoke(yourclass, parsedValue);
         }
-
+        
+    }
+    
+    /**
+     * Check if the input is a file upload or a simple input
+     */
+    public static boolean checkType(HttpServletRequest request, String parameterName, PrintWriter out)throws Exception{
+        boolean isFileupload = false;
+        Part filePart = request.getPart(parameterName);
+        String disposition = filePart.getHeader("Content-Disposition");
+        if(disposition != null && disposition.startsWith("form-data") && filePart.getSubmittedFileName() != null){
+            isFileupload = true;
+        }
+        else{
+            isFileupload = false;
+        }
+        return isFileupload;
     }
     
     /**
@@ -157,7 +192,7 @@ public class MyUtils {
     }
 
     /**
-     * This function gets the proper method as Method type 
+     * This function gets the proper method as Method type
      * @param map mapping that contains the class name and method name that has been called
      * @param yourclass is instance of the class in map
      */
@@ -174,7 +209,7 @@ public class MyUtils {
     }
 
     /**
-     * This function call the rigth method by giving him the right(s) argument
+     * This function call the right method by giving him the right(s) argument
      * Also It parse the input from html to the proper type required by the method thqt will be called
      * @param request HttpServletRequest that contains the attribute sended from form
      * @param yourclass instance of the proper class that contains the method
