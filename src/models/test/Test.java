@@ -22,7 +22,7 @@ public class Test {
         datas.put("Two", 666);
         datas.put("Three", "<3");
 
-        return new Modelview("Findall.jsp", datas);
+        return new Modelview("Findall.jsp", datas, false);
     }
 
     @MethodAnnotation(url="arg.do", args=true)
@@ -31,6 +31,6 @@ public class Test {
         datas.put("One", a);
         datas.put("Two", b);
 
-        return new Modelview("Findall.jsp", datas);
+        return new Modelview("Findall.jsp", datas, false);
     }
 }

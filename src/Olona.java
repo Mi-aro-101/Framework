@@ -26,7 +26,7 @@ public class Olona{
         datas.put("Compagnon", getNbrCompagnon());
         datas.put("File", getMyFile());
 
-        return new Modelview("Display.jsp", datas);
+        return new Modelview("Display.jsp", datas, true);
     }
 
     //Getters

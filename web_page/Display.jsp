@@ -21,6 +21,7 @@
             <li><%=request.getAttribute("Compagnon")%></li>
             <li><%=((FileDetails)(request.getAttribute("File"))).getFileSize()%></li>
             <li><%=((FileDetails)(request.getAttribute("File"))).getFileBytes()%></li>
+            <li><%=request.getAttribute("json")%></li>
             <% } catch(Exception e){out.println(e);}%>
         </ul>
     </body>

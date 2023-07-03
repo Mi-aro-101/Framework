@@ -80,14 +80,23 @@ public class FrontServlet extends HttpServlet {
         Mapping map = getUrlMapping().get(urlMethod);
         out.println(map.getClassName());
         out.println(map.getMethod());
+
+        // If the user choose the results to be in json, this variable will be set to
+        String datas = "";
         
-        // Checking if the url match a method and if so dispatch it otherwise do nothing
+        // Checking if the url match a method and if so dispatch it, otherwise do nothing
         try{
             Object o = Class.forName(map.getClassName()).getConstructor().newInstance();
             MyUtils.setParsed(request, o, out);
             Modelview mv =  MyUtils.urlModelView(request, map, getUrlMapping(), urlMethod, o, out);
+            out.println(mv.getIsJson());
+            if(mv.getIsJson()){
+                datas = MyUtils.hashMaptoJson(mv.getData());
+                mv.setDataJson(datas);
+                request.setAttribute("json", mv.getDataJson());
+            }
             if(mv != null){
-                request.getRequestDispatcher(mv.getView()).forward(request, response);     
+                request.getRequestDispatcher(mv.getView()).forward(request, response);
             }
         }catch(Exception e){
             out.println(e);

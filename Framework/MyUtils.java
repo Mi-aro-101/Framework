@@ -31,6 +31,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
+import com.google.gson.*;
 
 /**
  *
@@ -243,4 +244,15 @@ public class MyUtils {
 
         return (Modelview)yourclass.getClass().getMethod(map.getMethod(), argsTypes).invoke(yourclass, args);
     }  
+
+    /**
+     * This function tranform Hashmap to json
+     */
+    public static String hashMaptoJson(HashMap<String, Object> datas)throws Exception {
+        String json = "";
+        Gson parser = new Gson();
+        json = parser.toJson(datas);
+
+        return json;
+    }
 }

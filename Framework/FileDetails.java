@@ -43,7 +43,7 @@ public class FileDetails {
         datas.put("Content", getContentType());
         datas.put("bytes", getFileBytes());
 
-        return new Modelview("Display.jsp", datas);
+        return new Modelview("Display.jsp", datas, true);
     }
 
     public static FileDetails retrieveFileDetails(Part filePart)throws Exception{
