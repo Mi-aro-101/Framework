@@ -90,7 +90,7 @@ public class FrontServlet extends HttpServlet {
             MyUtils.setParsed(request, o, out);
             Modelview mv =  MyUtils.urlModelView(request, map, getUrlMapping(), urlMethod, o, out);
             out.println(mv.getIsJson());
-            if(mv.getIsJson()){
+            if(mv.getIsJson() || mv.isAnnotationPresent(RestAPI.class)){
                 datas = MyUtils.hashMaptoJson(mv.getData());
                 mv.setDataJson(datas);
                 request.setAttribute("json", mv.getDataJson());
