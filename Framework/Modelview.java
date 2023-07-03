@@ -13,13 +13,16 @@ import java.util.*;
 public class Modelview {
     String view;
     HashMap<String, Object> data;
+    boolean isJson;
+    String dataJson;
 
     //Constructor
     public Modelview(){}
     
-    public Modelview(String view, HashMap<String, Object> data) {
+    public Modelview(String view, HashMap<String, Object> data, boolean isJson) {
         setView(view);
         setData(data);
+        setIsJson(isJson);
     }
     
     public HashMap<String, Object> getData(){
@@ -29,6 +32,14 @@ public class Modelview {
     //Getters
     public String getView() {
         return view;
+    }
+
+    public boolean getIsJson() {
+        return this.isJson;
+    }
+
+    public String getDataJson(){
+        return this.dataJson;
     }
 
     //Setters
@@ -43,6 +54,12 @@ public class Modelview {
     public void addItem(String key, Object value){
         this.getData().put(key, value);
     }
-    
-    
+
+    public void setIsJson(boolean isJson){
+        this.isJson = isJson;
+    }
+
+    public void setDataJson(String dataJson){
+        this.dataJson = dataJson;
+    }
 }
