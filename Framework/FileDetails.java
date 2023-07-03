@@ -11,7 +11,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.Part;
-import java.io.IOException;
+import java.io.*;
 
 @ModelAnnotation
 @WebServlet("/upload")
@@ -21,12 +21,27 @@ public class FileDetails {
     String fileName;
     long fileSize;
     String contentType;
+    byte[] filebytes;
+
+    public byte[] getBytesPart()throws Exception{
+        InputStream content = this.getFilePart().getInputStream();
+        byte[] buffer = new byte[1024];
+        int read = 0;
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        
+        while ((read = content.read(buffer)) != -1) {
+            output.write(buffer, 0, read);
+        }
+
+        return output.toByteArray();
+    }
 
     @MethodAnnotation(url = "upload")
-    public Modelview getFileabout(){
+    public Modelview getFileabout() throws Exception{
         HashMap<String, Object> datas = new HashMap<>();
         datas.put("Nom", getFileName());
         datas.put("Content", getContentType());
+        datas.put("bytes", getFileBytes());
 
         return new Modelview("Display.jsp", datas);
     }
@@ -40,11 +55,12 @@ public class FileDetails {
     }
     
     // Constructor
-    public FileDetails(Part filePart, String fileName, long fileSize, String contentType) {
-        this.filePart = filePart;
-        this.fileName = fileName;
-        this.fileSize = fileSize;
-        this.contentType = contentType;
+    public FileDetails(Part filePart, String fileName, long fileSize, String contentType) throws Exception{
+        this.setFilePart(filePart);
+        this.setFileName(fileName);
+        this.setFileSize(fileSize);
+        this.setContentType(contentType); 
+        this.setFileBytes(this.getBytesPart());   
     }
 
     public FileDetails(){}
@@ -66,6 +82,10 @@ public class FileDetails {
         return contentType;
     }
 
+    public byte[] getFileBytes(){
+        return this.filebytes;
+    }
+
     // Setters
     public void setFilePart(Part filePart) {
         this.filePart = filePart;
@@ -81,5 +101,9 @@ public class FileDetails {
 
     public void setContentType(String contentType) {
         this.contentType = contentType;
+    }
+
+    public void setFileBytes(byte[] fileBytes) {
+        this.filebytes = fileBytes;
     }
 }

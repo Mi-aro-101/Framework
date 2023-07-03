@@ -20,6 +20,7 @@
             <li><%=request.getAttribute("Nom")%></li>
             <li><%=request.getAttribute("Compagnon")%></li>
             <li><%=((FileDetails)(request.getAttribute("File"))).getFileSize()%></li>
+            <li><%=((FileDetails)(request.getAttribute("File"))).getFileBytes()%></li>
             <% } catch(Exception e){out.println(e);}%>
         </ul>
     </body>
