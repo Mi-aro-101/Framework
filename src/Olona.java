@@ -20,13 +20,14 @@ public class Olona{
     }
 
     @MethodAnnotation(url="fillup.do")
+    @RestAPI
     public Modelview fillup(){
         HashMap<String, Object> datas = new HashMap<>();
         datas.put("Nom", getNom());
         datas.put("Compagnon", getNbrCompagnon());
         datas.put("File", getMyFile());
 
-        return new Modelview("Display.jsp", datas, true);
+        return new Modelview("Display.jsp", datas, false);
     }
 
     //Getters
