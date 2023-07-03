@@ -15,7 +15,7 @@ import java.util.*;
  */
 @ModelAnnotation
 public class Test {
-    @MethodAnnotation(url="findall")
+    @MethodAnnotation(url="findall.do")
     public Modelview findall(){
         HashMap<String, Object> datas = new HashMap<>();
         datas.put("One", "Datebayo");
@@ -25,7 +25,7 @@ public class Test {
         return new Modelview("Findall.jsp", datas);
     }
 
-    @MethodAnnotation(url="arg", args=true)
+    @MethodAnnotation(url="arg.do", args=true)
     public Modelview insert(String a, int b){
         HashMap<String, Object> datas = new HashMap<>();
         datas.put("One", a);

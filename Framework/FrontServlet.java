@@ -23,11 +23,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jakarta.servlet.http.Part;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
 
 /**
  *
  * @author miaro
  */
+@MultipartConfig
 public class FrontServlet extends HttpServlet {
     
     HashMap<String, Mapping> urlMapping = new HashMap<>();
@@ -75,6 +79,7 @@ public class FrontServlet extends HttpServlet {
 
         Mapping map = getUrlMapping().get(urlMethod);
         out.println(map.getClassName());
+        out.println(map.getMethod());
         
         // Checking if the url match a method and if so dispatch it otherwise do nothing
         try{
